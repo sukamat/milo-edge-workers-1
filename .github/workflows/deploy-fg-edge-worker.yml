@@ -1,0 +1,56 @@
+name: EdgeWorker
+
+on:
+  workflow_dispatch:
+    inputs:
+      ewBranch:
+        description: 'EdgeWorker Code Branch'
+        required: true
+        default: 'main'
+        type: string
+      edgeworker:
+        description: 'Edge Worker'
+        type: choice
+        required: true
+        default: 'Milo_floodgate_edge_workers'
+        options:
+            - 'Milo_floodgate_edge_workers'        
+      network:
+        description: 'Network'
+        type: choice
+        required: true
+        default: 'staging'
+        options:
+          - 'staging'          
+          - 'production'
+
+jobs:
+  deploy-edgeworker:     
+    name: Deploy EdgeWorker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ewBranch }}
+
+    #   - name: Build Edge Worker Scripts
+    #     run: |
+    #       npm run ewbuild
+    #       npm run ewprod2stg 
+     
+    #   - name: Deploy Edge Worker
+    #     uses: jdmevo123/akamai-edgeworker-action@1.1
+    #     env:
+    #       EDGERC: ${{ secrets.AKAMAI_EDGERC }}
+    #       WORKER_DIR: edgeworkers/${{ inputs.edgeworker }}
+    #     with:
+    #       edgeworkersName: ${{ inputs.edgeworker }}
+    #       network: ${{ inputs.network }}
+    #       groupid: '58544'
+
+      - name: Echo Inputs
+        run: |
+          echo "EdgeWorker Branch: ${{ inputs.ewBranch }}"
+          echo "EdgeWorker: ${{ inputs.edgeworker }}"
+          echo "Network: ${{ inputs.network }}"
