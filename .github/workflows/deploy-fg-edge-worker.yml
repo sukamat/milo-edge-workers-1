@@ -1,4 +1,4 @@
-name: EdgeWorker
+name: Deploy Milo EdgeWorker
 
 on:
   workflow_dispatch:
