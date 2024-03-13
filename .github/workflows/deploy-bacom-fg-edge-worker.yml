@@ -1,0 +1,44 @@
+name: Deploy Bacom Floodgate EdgeWorker
+
+on:
+  workflow_dispatch:
+    inputs:
+      ewBranch:
+        description: 'EdgeWorker Code Branch'
+        required: true
+        default: 'main'
+        type: string
+      edgeworker:
+        description: 'Edge Worker'
+        type: choice
+        required: true
+        default: 'Business_Stage_EdgeWorkers'
+        options:
+            - 'Business_Stage_EdgeWorkers'        
+      network:
+        description: 'Network'
+        type: choice
+        required: true
+        default: 'staging'
+        options:
+          - 'staging'
+
+jobs:
+  deploy-edgeworker:     
+    name: Deploy EdgeWorker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ewBranch }}
+     
+      - name: Deploy Edge Worker
+        uses: jdmevo123/akamai-edgeworker-action@1.1
+        env:
+          EDGERC: ${{ secrets.AKAMAI_EDGERC }}
+          WORKER_DIR: milo/${{ inputs.edgeworker }}
+        with:
+          edgeworkersName: ${{ inputs.edgeworker }}
+          network: ${{ inputs.network }}
+          groupid: '114609'
