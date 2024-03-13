@@ -39,18 +39,18 @@ jobs:
     #       npm run ewbuild
     #       npm run ewprod2stg 
      
-    #   - name: Deploy Edge Worker
-    #     uses: jdmevo123/akamai-edgeworker-action@1.1
-    #     env:
-    #       EDGERC: ${{ secrets.AKAMAI_EDGERC }}
-    #       WORKER_DIR: edgeworkers/${{ inputs.edgeworker }}
-    #     with:
-    #       edgeworkersName: ${{ inputs.edgeworker }}
-    #       network: ${{ inputs.network }}
-    #       groupid: '58544'
+      - name: Deploy Edge Worker
+        uses: jdmevo123/akamai-edgeworker-action@1.1
+        env:
+          EDGERC: ${{ secrets.AKAMAI_EDGERC }}
+          WORKER_DIR: milo/${{ inputs.edgeworker }}
+        with:
+          edgeworkersName: ${{ inputs.edgeworker }}
+          network: ${{ inputs.network }}
+          groupid: '58544'
 
-      - name: Echo Inputs
-        run: |
-          echo "EdgeWorker Branch: ${{ inputs.ewBranch }}"
-          echo "EdgeWorker: ${{ inputs.edgeworker }}"
-          echo "Network: ${{ inputs.network }}"
+    #   - name: Echo Inputs
+    #     run: |
+    #       echo "EdgeWorker Branch: ${{ inputs.ewBranch }}"
+    #       echo "EdgeWorker: ${{ inputs.edgeworker }}"
+    #       echo "Network: ${{ inputs.network }}"
