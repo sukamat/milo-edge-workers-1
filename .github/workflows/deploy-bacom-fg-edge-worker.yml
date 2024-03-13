@@ -37,7 +37,7 @@ jobs:
         uses: jdmevo123/akamai-edgeworker-action@1.1
         env:
           EDGERC: ${{ secrets.AKAMAI_EDGERC }}
-          WORKER_DIR: milo/${{ inputs.edgeworker }}
+          WORKER_DIR: bacom/${{ inputs.edgeworker }}
         with:
           edgeworkersName: ${{ inputs.edgeworker }}
           network: ${{ inputs.network }}
