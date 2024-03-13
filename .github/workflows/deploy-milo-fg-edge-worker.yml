@@ -1,4 +1,4 @@
-name: Deploy Milo EdgeWorker
+name: Deploy Milo Floodgate EdgeWorker
 
 on:
   workflow_dispatch:
@@ -33,11 +33,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ inputs.ewBranch }}
-
-    #   - name: Build Edge Worker Scripts
-    #     run: |
-    #       npm run ewbuild
-    #       npm run ewprod2stg 
      
       - name: Deploy Edge Worker
         uses: jdmevo123/akamai-edgeworker-action@1.1
@@ -48,9 +43,3 @@ jobs:
           edgeworkersName: ${{ inputs.edgeworker }}
           network: ${{ inputs.network }}
           groupid: '58544'
-
-    #   - name: Echo Inputs
-    #     run: |
-    #       echo "EdgeWorker Branch: ${{ inputs.ewBranch }}"
-    #       echo "EdgeWorker: ${{ inputs.edgeworker }}"
-    #       echo "Network: ${{ inputs.network }}"
