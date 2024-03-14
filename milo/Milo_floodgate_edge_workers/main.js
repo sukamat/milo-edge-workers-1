@@ -69,8 +69,8 @@ export async function onClientRequest(request) {
                     Extract fgCookie: [${fgCookie}], 
                     Extract verifyRegex: [${verifyRegex}]`);
 
+        // boolean - should be true or false
         if (fgCookiePattern.test(fgCookie)) {
-            // boolean - should be true or false
             request.setVariable('PMUSER_EW_FG_VERSION', 'pink');
             request.setHeader('X-Adobe-Floodgate', 'pink');
             logger.log('cookie matches: PINK origin');
