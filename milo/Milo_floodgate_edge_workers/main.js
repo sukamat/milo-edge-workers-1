@@ -31,6 +31,7 @@ async function getConfig() {
 
 export async function onClientRequest(request) {
     const config = await getConfig();
+    const { requestPath } = request;
     let origin;
 
     // Select the matching release based on the release color
@@ -42,8 +43,6 @@ export async function onClientRequest(request) {
     if (matchingReleases.length === 0) {
         logger.log(`No release found. \nServing original content for the requested path ${requestPath}`);
     } else {
-        const { requestPath } = request;
-
         // Select the matching release based on the request path
         const matchingPaths = matchingReleases.filter((release) => {
             const pathsRegex = new RegExp(release.pathsPattern.replace(/,/g, '|'));
