@@ -20,7 +20,7 @@ import { logger } from 'log';
 import { Cookies } from 'cookies';
 
 const PINK_ENV = 'pink';
-const CONFIG_URL = '/drafts/floodgate/configs/edge-worker-config.json';
+const CONFIG_URL = '/drafts/sukamat/akamai/edge-worker-config.json';
 
 async function getConfig() {
     // http subrequest to get the body of the json file in Adobe's main server
@@ -31,53 +31,91 @@ async function getConfig() {
 
 export async function onClientRequest(request) {
     const config = await getConfig();
-    const eventStartTime = new Date(config.times.data[0].startTime);
-    const eventEndTime = new Date(config.times.data[0].endTime);
-    const eventPathRegex = new RegExp(config.paths.data[0].paths);
-    const { path } = request;
-    const isPathMatch = eventPathRegex.test(path);
-
-    if (!isPathMatch) {
-        logger.log('no matching event');
-        return;
-    }
-
-    const currDateTime = new Date();
-
     let origin;
-    if (currDateTime > eventStartTime && currDateTime < eventEndTime) {
-        logger.log('current time is after event start, going to PINK');
-        request.setVariable('PMUSER_EW_FG_VERSION', 'pink');
-        origin = PINK_ENV;
-    } else if (currDateTime > eventEndTime) {
-        logger.log('current time is after the event ends, going to MAIN server');
-        // do nothing - go to default server
+
+    // Select the matching release based on the release color
+    const matchingReleases = config.data.filter(
+        (release) => release.release === PINK_ENV
+    );
+
+    // If no matching release is found, log a message
+    if (matchingReleases.length === 0) {
+        logger.log(`No release found. \nServing original content for the requested path ${requestPath}`);
     } else {
-        // Access the cookies from the request object
-        // Create a loop to validate all cookie headers executes the length of the array
-        const cookieHeader = request.getHeader('Cookie');
-        const cookies = new Cookies(cookieHeader);
-        const fgCookie = cookies.get('fg');
-        const verifyRegex = request.getVariable('PMUSER_EW_FG_NTH_WORD');
-        const fgCookiePattern = new RegExp(verifyRegex);
+        const { requestPath } = request;
 
-        // logger.log('Request cookies are:' + cookies), Check if the "fg" cookie is present
-        // iterate through the cookies and if it matches - apply the logic
+        // Select the matching release based on the request path
+        const matchingPaths = matchingReleases.filter((release) => {
+            const pathsRegex = new RegExp(release.pathsPattern.replace(/,/g, '|'));
+            return pathsRegex.test(requestPath);
+        });
 
-        logger.log(`The cookie pattern is: ${fgCookiePattern.test(fgCookie)}, 
-                    The cookie header is: [${cookieHeader[0]}], 
-                    Extract fgCookie: [${fgCookie}], 
-                    Extract verifyRegex: [${verifyRegex}]`);
+        const currentTime = new Date();
 
-        // boolean - should be true or false
-        if (fgCookiePattern.test(fgCookie)) {
-            request.setVariable('PMUSER_EW_FG_VERSION', 'pink');
-            request.setHeader('X-Adobe-Floodgate', 'pink');
-            logger.log('cookie matches: PINK origin');
-            origin = PINK_ENV;
+        // If no matching path is found, log a message
+        if (matchingPaths.length === 0) {
+            logger.log(`No paths matched. \nServing original content for the requested path ${requestPath}`);
+            // Serve original content if no matching path is found
         } else {
-            logger.log("cookie doesn't match: go to Main origin");
-            // do nothing - go to default server
+            // Select the matching release if current time is within the start and end time
+            const matchingPathDateTime = matchingPaths.find((release) => {
+                const startTime = new Date(release.startTime);
+                const endTime = new Date(release.endTime);
+                return currentTime >= startTime && currentTime <= endTime;
+            });
+            // Select the matching release if current time is before the start time
+            const matchingPathBeforeStartTime = matchingPaths.find((release) => {
+                const startTime = new Date(release.startTime);
+                return currentTime < startTime;
+            });
+
+            if (matchingPathDateTime) {
+                // If matching release is found with the current time between the start and end time, serve the PINK content
+                logger.log(`Serving ${PINK_ENV} Content for ${requestPath},
+                            Current Time: ${currentTime},
+                            Start Time: ${new Date(matchingPathDateTime.startTime)},
+                            End Time: ${new Date(matchingPathDateTime.endTime)},
+                            Paths Regex: ${matchingPathDateTime.pathsPattern}`);
+                request.setVariable('PMUSER_EW_FG_VERSION', 'pink');
+                origin = PINK_ENV;
+            } else if (matchingPathBeforeStartTime) {
+                // If matching release is found with the current time before the start time
+                logger.log(`FG release has not started yet 
+                            OR Request path ${requestPath} does not match the FG release. 
+                            Checking valid FG cookie for serving PINK content.`);
+                // Access the cookies from the request object and display pink content if valid floodgate cookie exists
+                // Serve all content if valid floodgate cookie is present
+
+                // Access the cookies from the request object
+                // Create a loop to validate all cookie headers executes the length of the array
+                const cookieHeader = request.getHeader('Cookie');
+                const cookies = new Cookies(cookieHeader);
+                const fgCookie = cookies.get('fg');
+                const verifyRegex = request.getVariable('PMUSER_EW_FG_NTH_WORD');
+                const fgCookiePattern = new RegExp(verifyRegex);
+
+                logger.log(`The cookie pattern is: ${fgCookiePattern.test(fgCookie)}, 
+                            The cookie header is: [${cookieHeader[0]}], 
+                            Extract fgCookie: [${fgCookie}], 
+                            Extract verifyRegex: [${verifyRegex}]`);
+
+                // boolean - should be true or false
+                if (fgCookiePattern.test(fgCookie)) {
+                    request.setVariable('PMUSER_EW_FG_VERSION', 'pink');
+                    request.setHeader('X-Adobe-Floodgate', 'pink');
+                    logger.log('cookie matches: PINK origin');
+                    origin = PINK_ENV;
+                } else {
+                    logger.log("cookie doesn't match: go to Main origin");
+                    // do nothing - go to default server
+                }
+            } else {
+                logger.log(`Request Path: ${requestPath}`);
+                // If current time is after the end time of all the available releases
+                logger.log(
+                    `No active FG releases found. \nServing original content for the requested path ${requestPath}`
+                );
+            }
         }
     }
 

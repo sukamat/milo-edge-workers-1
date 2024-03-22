@@ -1,4 +1,4 @@
 {
-  "edgeworker-version": "2.5",
-  "description" : "Milo Floodgate - deploy from github test"
+  "edgeworker-version": "2.6",
+  "description" : "Milo Floodgate - time based release testing"
 }
