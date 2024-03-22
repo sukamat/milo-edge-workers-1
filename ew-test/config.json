@@ -1,0 +1,125 @@
+{
+    "fgreleasetimeslots": {
+      "total": 2,
+      "offset": 0,
+      "limit": 2,
+      "data": [
+        {
+          "release": "pink",
+          "startTime": "2024-03-26T15:00:00Z",
+          "endTime": "2024-04-15T12:00:00Z"
+        },
+        {
+          "release": "blue",
+          "startTime": "2024-06-01T12:00:00Z",
+          "endTime": "2024-06-30T12:00:00Z"
+        }
+      ]
+    },
+    "paths": {
+      "total": 2,
+      "offset": 0,
+      "limit": 2,
+      "data": [
+        {
+          "release": "pink",
+          "paths": ".*"
+        },
+        {
+          "release": "blue",
+          "paths": "/dummy/*.*,/dummy-2/*.*"
+        }
+      ]
+    },
+    "fgreleasetimeslots_stage": {
+      "total": 1,
+      "offset": 0,
+      "limit": 1,
+      "data": [
+        {
+          "release": "pink",
+          "startTime": "2024-02-28T19:00:00Z",
+          "endTime": "2024-02-28T19:05:00Z"
+        }
+      ]
+    },
+    "fgrelease_sample": {
+      "total": 4,
+      "offset": 0,
+      "limit": 4,
+      "data": [
+        {
+          "release": "pink",
+          "startTime": "2024-03-01T15:00:00Z",
+          "endTime": "2024-03-26T14:59:00Z",
+          "pathsPattern": "^(?!\\/(?:[^\\/]+\\/)?(?:events|products|customer\\/sub)\\/).*$",
+          "Comments": "Allow all paths except those that have /events/, /products/ or /customer/sub/ in the first or second level of the request path"
+        },
+        {
+          "release": "pink",
+          "startTime": "2024-03-26T15:00:00Z",
+          "endTime": "2024-03-30T15:00:00Z",
+          "pathsPattern": "^(?!\\/(?:[^\\/]+\\/)?(?:products|customer\\/sub)\\/).*$",
+          "Comments": "Allow all paths except those that have /products/ or /customer/sub/ in first or second level"
+        },
+        {
+          "release": "pink",
+          "startTime": "2024-03-26T17:00:00Z",
+          "endTime": "2024-04-30T15:00:00Z",
+          "pathsPattern": ".*",
+          "Comments": "Allow all paths"
+        },
+        {
+          "release": "blue",
+          "startTime": "2025-06-01T12:00:00Z",
+          "endTime": "2025-06-30T15:00:00Z",
+          "pathsPattern": ".*",
+          "Comments": "Allow all paths"
+        }
+      ]
+    },
+    "fgrelease_new": {
+      "total": 4,
+      "offset": 0,
+      "limit": 4,
+      "data": [
+        {
+          "release": "pink",
+          "startTime": "2024-03-01T15:00:00Z",
+          "endTime": "2024-03-26T14:59:00Z",
+          "pathsPattern": "^(?!\\/(?:[^\\/]+\\/)?(?:content\\/events|content\\/marketing)\\/).*$",
+          "Comments": "Allow all paths except those that have /content/events/, /content/marketing/"
+        },
+        {
+          "release": "pink",
+          "startTime": "2024-03-26T15:00:00Z",
+          "endTime": "2024-03-30T15:00:00Z",
+          "pathsPattern": "^(?!\\/(?:[^\\/]+\\/)?(?:content\\/marketing)\\/).*$",
+          "Comments": "Allow all paths except those that have /content/marketing/"
+        },
+        {
+          "release": "pink",
+          "startTime": "2024-03-26T17:00:00Z",
+          "endTime": "2024-04-30T15:00:00Z",
+          "pathsPattern": ".*",
+          "Comments": "Allow all paths"
+        },
+        {
+          "release": "blue",
+          "startTime": "2025-06-01T12:00:00Z",
+          "endTime": "2025-06-30T15:00:00Z",
+          "pathsPattern": ".*",
+          "Comments": "Allow all paths"
+        }
+      ]
+    },
+    ":version": 3,
+    ":names": [
+      "fgreleasetimeslots",
+      "paths",
+      "fgreleasetimeslots_stage",
+      "fgrelease_sample",
+      "fgrelease_new"
+    ],
+    ":type": "multi-sheet"
+  }
