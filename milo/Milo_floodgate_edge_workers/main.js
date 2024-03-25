@@ -34,6 +34,7 @@ export async function onClientRequest(request) {
     const config = fullConfig.fgrelease_new;
     const { requestPath } = request;
     let origin;
+    logger.log(`Request Path: ${requestPath}`);
 
     // Select the matching release based on the release color
     const matchingReleases = config.data.filter(
@@ -42,7 +43,7 @@ export async function onClientRequest(request) {
 
     // If no matching release is found, log a message
     if (matchingReleases.length === 0) {
-        logger.log(`No release found. \nServing original content for the requested path ${requestPath}`);
+        logger.log(`No release found. Serving original content for the requested path ${requestPath}`);
     } else {
         // Select the matching release based on the request path
         const matchingPaths = matchingReleases.filter((release) => {
@@ -54,7 +55,7 @@ export async function onClientRequest(request) {
 
         // If no matching path is found, log a message
         if (matchingPaths.length === 0) {
-            logger.log(`No paths matched. \nServing original content for the requested path ${requestPath}`);
+            logger.log(`No paths matched. Serving original content for the requested path ${requestPath}`);
             // Serve original content if no matching path is found
         } else {
             // Select the matching release if current time is within the start and end time
@@ -94,10 +95,10 @@ export async function onClientRequest(request) {
                 const verifyRegex = request.getVariable('PMUSER_EW_FG_NTH_WORD');
                 const fgCookiePattern = new RegExp(verifyRegex);
 
-                logger.log(`The cookie pattern is: ${fgCookiePattern.test(fgCookie)}, 
-                            The cookie header is: [${cookieHeader[0]}], 
-                            Extract fgCookie: [${fgCookie}], 
-                            Extract verifyRegex: [${verifyRegex}]`);
+                // logger.log(`The cookie pattern is: ${fgCookiePattern.test(fgCookie)}, 
+                //             The cookie header is: [${cookieHeader[0]}], 
+                //             Extract fgCookie: [${fgCookie}], 
+                //             Extract verifyRegex: [${verifyRegex}]`);
 
                 // boolean - should be true or false
                 if (fgCookiePattern.test(fgCookie)) {
@@ -110,10 +111,10 @@ export async function onClientRequest(request) {
                     // do nothing - go to default server
                 }
             } else {
-                logger.log(`Request Path: ${requestPath}`);
+                // logger.log(`Request Path: ${requestPath}`);
                 // If current time is after the end time of all the available releases
                 logger.log(
-                    `No active FG releases found. \nServing original content for the requested path ${requestPath}`
+                    `No active FG releases found. Serving original content for the requested path ${requestPath}`
                 );
             }
         }
