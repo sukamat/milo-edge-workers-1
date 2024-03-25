@@ -32,7 +32,7 @@ async function getConfig() {
 export async function onClientRequest(request) {
     const fullConfig = await getConfig();
     const config = fullConfig.fgrelease_new;
-    const { requestPath } = request;
+    const requestPath = request.path;
     let origin;
     logger.log(`Request Path: ${requestPath}`);
 
