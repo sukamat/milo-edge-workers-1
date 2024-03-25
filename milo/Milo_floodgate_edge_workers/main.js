@@ -34,7 +34,6 @@ export async function onClientRequest(request) {
     const config = fullConfig.fgrelease_new;
     const requestPath = request.path;
     let origin;
-    logger.log(`Request Path: ${requestPath}`);
 
     // Select the matching release based on the release color
     const matchingReleases = config.data.filter(
@@ -84,21 +83,14 @@ export async function onClientRequest(request) {
                 logger.log(`FG release has not started yet 
                             OR Request path ${requestPath} does not match the FG release. 
                             Checking valid FG cookie for serving PINK content.`);
-                // Access the cookies from the request object and display pink content if valid floodgate cookie exists
-                // Serve all content if valid floodgate cookie is present
 
-                // Access the cookies from the request object
+                // Access the cookies from the request object and display pink content if valid floodgate cookie exists
                 // Create a loop to validate all cookie headers executes the length of the array
                 const cookieHeader = request.getHeader('Cookie');
                 const cookies = new Cookies(cookieHeader);
                 const fgCookie = cookies.get('fg');
                 const verifyRegex = request.getVariable('PMUSER_EW_FG_NTH_WORD');
                 const fgCookiePattern = new RegExp(verifyRegex);
-
-                // logger.log(`The cookie pattern is: ${fgCookiePattern.test(fgCookie)}, 
-                //             The cookie header is: [${cookieHeader[0]}], 
-                //             Extract fgCookie: [${fgCookie}], 
-                //             Extract verifyRegex: [${verifyRegex}]`);
 
                 // boolean - should be true or false
                 if (fgCookiePattern.test(fgCookie)) {
@@ -107,11 +99,9 @@ export async function onClientRequest(request) {
                     logger.log('cookie matches: PINK origin');
                     origin = PINK_ENV;
                 } else {
-                    logger.log("cookie doesn't match: go to Main origin");
-                    // do nothing - go to default server
+                    logger.log("Cookie doesn't match: Go to Main origin");
                 }
             } else {
-                // logger.log(`Request Path: ${requestPath}`);
                 // If current time is after the end time of all the available releases
                 logger.log(
                     `No active FG releases found. Serving original content for the requested path ${requestPath}`
